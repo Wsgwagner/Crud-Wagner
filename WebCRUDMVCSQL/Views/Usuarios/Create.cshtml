@@ -1,0 +1,91 @@
+﻿@model WebCRUDMVCSQL.Models.Usuarios
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cadastro - Sistema</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body class="auth-body">
+
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-7 col-lg-6">
+                <div class="card auth-card p-4">
+                    <div class="card-body">
+                        <div class="mb-4">
+                            <h4 class="fw-bold text-dark m-0">Criar Novo Usuário</h4>
+                            <small class="text-muted">Preencha as informações do formulário para ter acesso</small>
+                        </div>
+
+                        <form asp-action="Create" method="post">
+                            <div asp-validation-summary="ModelOnly" class="text-danger small mb-3"></div>
+
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label asp-for="Nome" class="form-label small fw-semibold text-secondary">Nome Completo</label>
+                                    <input asp-for="Nome" class="form-control auth-form-control" placeholder="Nome" />
+                                    <span asp-validation-for="Nome" class="text-danger small"></span>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label asp-for="Cpf" class="form-label small fw-semibold text-secondary">CPF</label>
+                                    <input asp-for="Cpf" class="form-control auth-form-control" placeholder="000.000.000-00" />
+                                    <span asp-validation-for="Cpf" class="text-danger small"></span>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label asp-for="Email" class="form-label small fw-semibold text-secondary">E-mail</label>
+                                    <input asp-for="Email" class="form-control auth-form-control" type="email" placeholder="nome@provedor.com" />
+                                    <span asp-validation-for="Email" class="text-danger small"></span>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label asp-for="Telefone" class="form-label small fw-semibold text-secondary">Telefone</label>
+                                    <input asp-for="Telefone" class="form-control auth-form-control" placeholder="(00) 00000-0000" />
+                                    <span asp-validation-for="Telefone" class="text-danger small"></span>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label asp-for="DataNascimento" class="form-label small fw-semibold text-secondary">Data de Nascimento</label>
+                                <input asp-for="DataNascimento" class="form-control auth-form-control" type="date" />
+                                <span asp-validation-for="DataNascimento" class="text-danger small"></span>
+                            </div>
+
+                            <div class="mb-3">
+                                <label asp-for="Endereco" class="form-label small fw-semibold text-secondary">Endereço Residencial</label>
+                                <input asp-for="Endereco" class="form-control auth-form-control" placeholder="Rua, Número, Bairro, Cidade" />
+                                <span asp-validation-for="Endereco" class="text-danger small"></span>
+                            </div>
+
+                            <div class="mb-4">
+                                <label asp-for="Senha" class="form-label small fw-semibold text-secondary">Senha</label>
+                                <input asp-for="Senha" class="form-control auth-form-control" type="password" placeholder="Senha" />
+                                <span asp-validation-for="Senha" class="text-danger small"></span>
+                            </div>
+
+                            <button type="submit" class="btn btn-success auth-btn-success w-100 fw-bold shadow-sm mb-3">Concluir Cadastro</button>
+                        </form>
+
+                        <div class="text-center pt-2 border-top">
+                            <a asp-action="Login" class="text-decoration-none small fw-semibold text-muted">← Já tem conta? Voltar para o Login</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @section Scripts {
+        @{
+            await Html.RenderPartialAsync("_ValidationScriptsPartial");
+        }
+    }
+</body>
+</html>

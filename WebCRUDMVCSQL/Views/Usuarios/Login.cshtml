@@ -1,0 +1,56 @@
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login - Sistema</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <!-- Vinculando o arquivo CSS do projeto para ler as novas classes -->
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body class="auth-body">
+
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-5 col-lg-4">
+                <div class="card auth-card p-4">
+                    <div class="card-body">
+                        <div class="text-center mb-4">
+                            <h3 class="fw-bold text-dark m-0">Bem-vindo</h3>
+                            <small class="text-muted">Acesse sua conta para continuar</small>
+                        </div>
+
+                        @if (ViewBag.Erro != null)
+                        {
+                            <div class="alert alert-danger py-2 small text-center" role="alert">
+                                @ViewBag.Erro
+                            </div>
+                        }
+
+                        <form asp-action="Login" method="post">
+                            <div class="mb-3">
+                                <label class="form-label small fw-semibold text-secondary">E-mail</label>
+                                <input type="email" name="email" class="form-control auth-form-control" placeholder="exemplo@email.com" required />
+                            </div>
+                            <div class="mb-4">
+                                <label class="form-label small fw-semibold text-secondary">Senha</label>
+                                <input type="password" name="senha" class="form-control auth-form-control" placeholder="••••••••" required />
+                            </div>
+                            <button type="submit" class="btn btn-primary auth-btn-primary w-100 fw-bold shadow-sm mb-3">Entrar no Sistema</button>
+                        </form>
+
+                        <div class="text-center pt-2 border-top">
+                            <span class="text-muted small">Novo por aqui? </span>
+                            <a asp-action="Create" class="text-decoration-none small fw-bold text-primary">Crie uma conta</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
