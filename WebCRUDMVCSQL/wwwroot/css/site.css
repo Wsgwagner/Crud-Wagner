@@ -15,64 +15,15 @@ html {
 
 body {
   margin-bottom: 60px;
+  background-color:dimgray;
+
+
 }
 
-
-/* ==========================================================================
-   ESTILOS EXCLUSIVOS PARA CLAN DE AUTENTICAÇÃO (LOGIN / CADASTRO)
-   ========================================================================== */
-
-/* Fundo em degradê moderno aplicado apenas quando a classe for chamada */
-.auth-body {
-    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: system-ui, -apple-system, sans-serif;
+header{
+    background-color: deepskyblue;
 }
 
-/* Card flutuante branco */
-.auth-card {
-    border: none;
-    border-radius: 16px;
-    background: #ffffff;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
-}
-
-/* Customização de entradas de texto */
-.auth-form-control {
-    border-radius: 8px;
-    padding: 10px 14px;
-}
-
-/* Botão de ação principal (Login) */
-.auth-btn-primary {
-    background: #2563eb;
-    border: none;
-    border-radius: 8px;
-    padding: 12px;
-    transition: all 0.2s ease-in-out;
-}
-
-    .auth-btn-primary:hover {
-        background: #1d4ed8;
-        transform: translateY(-1px);
-    }
-
-/* Botão de ação secundário (Cadastro) */
-.auth-btn-success {
-    background: #10b981;
-    border: none;
-    border-radius: 8px;
-    padding: 12px;
-    transition: all 0.2s ease-in-out;
-}
-
-    .auth-btn-success:hover {
-        background: #059669;
-        transform: translateY(-1px);
-    }
 
 
 /* ==========================================================================
@@ -136,6 +87,7 @@ body {
 /* ==========================================================================
    1. REGRA GLOBAL DO SISTEMA INTERNO
    ========================================================================== */
+
 body {
     background-color: #f8fafc !important; /* Fundo cinza bem claro, moderno e confortável */
     color: #334155;
@@ -170,9 +122,8 @@ body {
 }
 
 
-/* ==========================================================================
-   2. CUSTOMIZAÇÃO EXCLUSIVA DAS TABELAS (PRODUTOS / CLIENTES)
-   ========================================================================== */
+  /* 2. CUSTOMIZAÇÃO EXCLUSIVA DAS TABELAS (PRODUTOS / CLIENTES)*/
+
 .table {
     margin-bottom: 0;
 }
@@ -211,48 +162,22 @@ body {
     border-top: 1px solid #e2e8f0;
 }
 
-
-/* ==========================================================================
-   4. ESTILOS EXCLUSIVOS PARA AS TELAS DE AUTENTICAÇÃO (LOGIN / CADASTRO)
-   ========================================================================== */
-
-/* Fundo em degradê escuro (afeta apenas as páginas com essa classe na tag body) */
-.auth-body {
-    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%) !important;
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 40px 0;
+/* Efeito de aproximação suave nos botões de ação da tabela */
+.table .btn-light {
+    background-color: #ffffff;
+    border-color: #e2e8f0 !important;
 }
 
-/* Card flutuante da autenticação */
-.auth-card {
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4) !important;
-}
-
-.auth-form-control {
-    background-color: #f8fafc;
-}
-
-/* Botão azul do Login */
-.auth-btn-primary {
-    background-color: #2563eb !important;
-    border: none;
-}
-
-    .auth-btn-primary:hover {
-        background-color: #1d4ed8 !important;
+    .table .btn-light:hover {
+        background-color: #f1f5f9;
         transform: translateY(-1px);
     }
 
-/* Botão verde do Cadastro */
-.auth-btn-success {
-    background-color: #10b981 !important;
-    border: none;
+/* Evita que textos longos quebrem a estrutura da tabela */
+.text-truncate {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
-    .auth-btn-success:hover {
-        background-color: #059669 !important;
-        transform: translateY(-1px);
-    }
+
