@@ -41,12 +41,11 @@ namespace WebCRUDMVCSQL.Controllers
 
             // 2. Se o usuário existir, usamos o BCrypt para verificar se a senha bate com o Hash
             if (usuario != null)
-            {                // os parâmetros do hash interno ("usuario.Senha") e valida se são correspondentes.
+            {                
                 bool senhaValida = BCrypt.Net.BCrypt.Verify(senha, usuario.Senha);
 
                 if (senhaValida)
                 {
-                    // Login com sucesso! Redireciona para a tela de Produtos
                     return RedirectToAction("Index", "Produtos");
                 }
             }
