@@ -4,6 +4,8 @@
     ViewData["Title"] = "Novo Produto";
 }
 
+
+
 <div class="row justify-content-center mt-3">
     <div class="col-md-8 col-lg-6">
         <div class="card border-0 shadow-sm rounded-3 p-4">
@@ -16,22 +18,22 @@
 
                 <form asp-action="Create">
                     <div asp-validation-summary="ModelOnly" class="text-danger small mb-3"></div>
-                    
+
                     <div class="form-group mb-3">
                         <label asp-for="Nome" class="form-label small fw-semibold text-secondary">Nome do Produto</label>
-                        <input asp-for="Nome" class="form-control px-3 py-2" placeholder="Nome comercial" />
+                        <input asp-for="Nome" class="form-control px-3 py-2" placeholder="Nome comercial" required />
                         <span asp-validation-for="Nome" class="text-danger small"></span>
                     </div>
 
                     <div class="row">
                         <div class="col-md-6 form-group mb-3">
                             <label asp-for="Peso" class="form-label small fw-semibold text-secondary">Peso (kg)</label>
-                            <input asp-for="Peso" class="form-control px-3 py-2" placeholder="0.00" />
+                            <input asp-for="Peso" class="form-control px-3 py-2" placeholder="0.00" required />
                             <span asp-validation-for="Peso" class="text-danger small"></span>
                         </div>
                         <div class="col-md-6 form-group mb-4">
                             <label asp-for="Preco" class="form-label small fw-semibold text-secondary">Preço (R$)</label>
-                            <input asp-for="Preco" class="form-control px-3 py-2" type="text" placeholder="0,00" />
+                            <input asp-for="Preco" class="form-control px-3 py-2" type="text" placeholder="0,00" required />
                             <span asp-validation-for="Preco" class="text-danger small"></span>
                         </div>
                     </div>
@@ -46,17 +48,5 @@
     </div>
 </div>
 
-@section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
-    <script>
-        $.validator.methods.range = function (value, element, param) {
-            var globalizedValue = value.replace(",", ".");
-            return this.optional(element) || (globalizedValue >= param[0] && globalizedValue <= param[1]);
-        }
-        $.validator.methods.number = function (value, element) {
-            return this.optional(element) || /-?(?:\d+|\d{1,3}(?:[\s.,]\d{3})+)(?:[\.,]\d+)?$/.test(value);
-        }
-    </script>
-}
+
+

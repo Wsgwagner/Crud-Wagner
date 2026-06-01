@@ -4,6 +4,7 @@
     ViewData["Title"] = "Novo Cliente";
 }
 
+
 <div class="row justify-content-center mt-3">
     <div class="col-md-10 col-lg-8">
         <div class="card border-0 shadow-sm rounded-3 p-4">
@@ -20,12 +21,12 @@
                     <div class="row">
                         <div class="col-md-6 form-group mb-3">
                             <label asp-for="Nome" class="form-label small fw-semibold text-secondary">Nome Completo</label>
-                            <input asp-for="Nome" class="form-control px-3 py-2" placeholder="Nome do cliente" />
+                            <input asp-for="Nome" class="form-control px-3 py-2" placeholder="Nome do cliente" required />
                             <span asp-validation-for="Nome" class="text-danger small"></span>
                         </div>
                         <div class="col-md-6 form-group mb-3">
                             <label asp-for="Cpf" class="form-label small fw-semibold text-secondary">CPF</label>
-                            <input asp-for="Cpf" class="form-control px-3 py-2" placeholder="000.000.000-00" />
+                            <input asp-for="Cpf" class="form-control px-3 py-2" placeholder="000.000.000-00" required />
                             <span asp-validation-for="Cpf" class="text-danger small"></span>
                         </div>
                     </div>
@@ -33,25 +34,25 @@
                     <div class="row">
                         <div class="col-md-6 form-group mb-3">
                             <label asp-for="Telefone" class="form-label small fw-semibold text-secondary">Telefone / celular</label>
-                            <input asp-for="Telefone" class="form-control px-3 py-2" type="text" placeholder="(00) 00000-0000" />
+                            <input asp-for="Telefone" class="form-control px-3 py-2" type="text" placeholder="(00) 00000-0000" required />
                             <span asp-validation-for="Telefone" class="text-danger small"></span>
                         </div>
                         <div class="col-md-6 form-group mb-3">
                             <label asp-for="DataNascimento" class="form-label small fw-semibold text-secondary">Data de Nascimento</label>
-                            <input asp-for="DataNascimento" class="form-control px-3 py-2" type="date" />
+                            <input asp-for="DataNascimento" class="form-control px-3 py-2" type="date" required />
                             <span asp-validation-for="DataNascimento" class="text-danger small"></span>
                         </div>
                     </div>
 
                     <div class="form-group mb-3">
                         <label asp-for="Email" class="form-label small fw-semibold text-secondary">E-mail Comercial</label>
-                        <input asp-for="Email" class="form-control px-3 py-2" type="text" placeholder="nome@provedor.com" />
+                        <input asp-for="Email" class="form-control px-3 py-2" type="text" placeholder="nome@provedor.com" required />
                         <span asp-validation-for="Email" class="text-danger small"></span>
                     </div>
 
                     <div class="form-group mb-4">
                         <label asp-for="Endereco" class="form-label small fw-semibold text-secondary">Endereço Residencial</label>
-                        <input asp-for="Endereco" class="form-control px-3 py-2" type="text" placeholder="Rua, Número, Bairro, Cidade" />
+                        <input asp-for="Endereco" class="form-control px-3 py-2" type="text" placeholder="Rua, Número, Bairro, Cidade" required />
                         <span asp-validation-for="Endereco" class="text-danger small"></span>
                     </div>
 
@@ -65,8 +66,5 @@
     </div>
 </div>
 
-@section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
-}
+
+

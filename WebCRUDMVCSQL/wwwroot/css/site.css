@@ -89,7 +89,7 @@ header{
    ========================================================================== */
 
 body {
-    background-color: #f8fafc !important; /* Fundo cinza bem claro, moderno e confortável */
+    background-color: powderblue; /* Fundo cinza bem claro, moderno e confortável */
     color: #334155;
     font-family: system-ui, -apple-system, sans-serif;
     padding-bottom: 75px; /* Deixa um espaço para o rodapé fixo não cobrir os dados */
