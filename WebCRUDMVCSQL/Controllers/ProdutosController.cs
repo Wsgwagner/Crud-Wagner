@@ -58,9 +58,17 @@ namespace WebCRUDMVCSQL.Controllers
         {
             if (ModelState.IsValid)
             {
+                if (!String.IsNullOrWhiteSpace(produto.Nome))
+                {
+                    produto.Nome = System.Globalization.CultureInfo.CurrentCulture.TextInfo.ToTitleCase(produto.Nome.ToUpper());
+                    return View(produto);
+                }
+                //Salvar o produto no banco de dados
                 _context.Add(produto);
                 await _context.SaveChangesAsync();
+
                 return RedirectToAction(nameof(Index));
+
             }
             return View(produto);
         }
@@ -72,7 +80,7 @@ namespace WebCRUDMVCSQL.Controllers
             {
                 return NotFound();
             }
-                   
+
 
             var produto = await _context.Produto.FindAsync(id);
             if (produto == null)

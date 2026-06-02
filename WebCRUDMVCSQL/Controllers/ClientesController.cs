@@ -59,7 +59,7 @@ namespace WebCRUDMVCSQL.Controllers
 
                 if (!String.IsNullOrWhiteSpace(cliente.Nome))
                 {
-                    String nomeFormato = System.Globalization.CultureInfo.CurrentCulture.TextInfo.ToTitleCase(cliente.Nome.ToLower());
+                    String nomeFormato = System.Globalization.CultureInfo.CurrentCulture.TextInfo.ToTitleCase(cliente.Nome.ToUpper());
                     cliente.Nome = nomeFormato;
                 }
 

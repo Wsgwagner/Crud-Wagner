@@ -77,7 +77,7 @@ namespace WebCRUDMVCSQL.Controllers
 
                 if (!string.IsNullOrWhiteSpace(Usuarios.Nome))
                 {
-                    String nomeFormatado = System.Globalization.CultureInfo.CurrentCulture.TextInfo.ToTitleCase(Usuarios.Nome.ToLower());
+                    String nomeFormatado = System.Globalization.CultureInfo.CurrentCulture.TextInfo.ToTitleCase(Usuarios.Nome.ToUpper());
                     Usuarios.Nome = nomeFormatado;
                 }
 
