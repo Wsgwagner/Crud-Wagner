@@ -56,11 +56,25 @@ namespace WebCRUDMVCSQL.Controllers
         {
             if (ModelState.IsValid)
             {
+
+                if (!String.IsNullOrWhiteSpace(cliente.Nome))
+                {
+                    String nomeFormato = System.Globalization.CultureInfo.CurrentCulture.TextInfo.ToTitleCase(cliente.Nome.ToLower());
+                    cliente.Nome = nomeFormato;
+                }
+
+                //Salva o Cliente no Banco de Dados
                 _context.Add(cliente);
                 await _context.SaveChangesAsync();
+
+                //Retorna para a Index
                 return RedirectToAction(nameof(Index));
+
+
+
             }
             return View(cliente);
+
         }
 
         // GET: Clientes/Edit/5

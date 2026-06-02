@@ -75,6 +75,12 @@ namespace WebCRUDMVCSQL.Controllers
                     return View(Usuarios);
                 }
 
+                if (!string.IsNullOrWhiteSpace(Usuarios.Nome))
+                {
+                    String nomeFormatado = System.Globalization.CultureInfo.CurrentCulture.TextInfo.ToTitleCase(Usuarios.Nome.ToLower());
+                    Usuarios.Nome = nomeFormatado;
+                }
+
                 // Transforma a senha limpa (ex: "123456") em um hash seguro de 60 caracteres
                 Usuarios.Senha = BCrypt.Net.BCrypt.HashPassword(Usuarios.Senha);
 
