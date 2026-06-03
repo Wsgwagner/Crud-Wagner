@@ -17,6 +17,7 @@ namespace WebCRUDMVCSQL.Controllers
             _context = context;
         }
 
+
         // GET: Usuarios/Login
         public IActionResult Login()
         {
@@ -26,7 +27,6 @@ namespace WebCRUDMVCSQL.Controllers
         // POST: Usuarios/Login
         [HttpPost]
         [ValidateAntiForgeryToken]
-
         public async Task<IActionResult> Login(string email, string senha)
         {
             if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(senha))
@@ -41,12 +41,12 @@ namespace WebCRUDMVCSQL.Controllers
 
             // 2. Se o usuário existir, usamos o BCrypt para verificar se a senha bate com o Hash
             if (usuario != null)
-            {                
+            {
                 bool senhaValida = BCrypt.Net.BCrypt.Verify(senha, usuario.Senha);
 
                 if (senhaValida)
                 {
-                    return RedirectToAction("Index", "Produtos");
+                    return RedirectToAction("Index", "Home");
                 }
             }
 
@@ -54,6 +54,7 @@ namespace WebCRUDMVCSQL.Controllers
             ViewBag.Erro = "E-mail ou senha inválidos.";
             return View();
         }
+
 
         // GET: Usuarios/Create
         public IActionResult Create()
@@ -64,37 +65,60 @@ namespace WebCRUDMVCSQL.Controllers
         // POST: Usuarios/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Nome,Cpf,Telefone,DataNascimento,Email,Endereco,Senha")] Usuarios Usuarios)
+        public async Task<IActionResult> Create([Bind("Id,Nome,Cpf,Telefone,DataNascimento,Email,Endereco,Senha")] Usuarios usuarios)
         {
-            if (ModelState.IsValid)
+            // 1. Validação manual do e-mail (camada extra de segurança)
+            if (string.IsNullOrWhiteSpace(usuarios.Email) ||
+                !usuarios.Email.Contains("@") ||
+                usuarios.Email.IndexOf("@") == 0)
             {
-                var emailExiste = await _context.Set<Usuarios>().AnyAsync(u => u.Email == Usuarios.Email);
+                ModelState.AddModelError("Email", "E-mail inválido. Informe caracteres antes do @.");
+            }
+
+            // 2. Verificações de Duplicidade (Banco de Dados)
+            if (!string.IsNullOrWhiteSpace(usuarios.Email))
+            {
+                bool emailExiste = await _context.Set<Usuarios>().AnyAsync(u => u.Email == usuarios.Email);
                 if (emailExiste)
                 {
                     ModelState.AddModelError("Email", "Este e-mail já está cadastrado.");
-                    return View(Usuarios);
                 }
-
-                if (!string.IsNullOrWhiteSpace(Usuarios.Nome))
-                {
-                    String nomeFormatado = System.Globalization.CultureInfo.CurrentCulture.TextInfo.ToTitleCase(Usuarios.Nome.ToUpper());
-                    Usuarios.Nome = nomeFormatado;
-                }
-
-                // Transforma a senha limpa (ex: "123456") em um hash seguro de 60 caracteres
-                Usuarios.Senha = BCrypt.Net.BCrypt.HashPassword(Usuarios.Senha);
-
-                _context.Add(Usuarios);
-                await _context.SaveChangesAsync();
-
-                return RedirectToAction(nameof(Login));
             }
 
-            return View(Usuarios);
+            if (!string.IsNullOrWhiteSpace(usuarios.Cpf))
+            {
+                bool cpfExiste = await _context.Set<Usuarios>().AnyAsync(u => u.Cpf == usuarios.Cpf);
+                if (cpfExiste)
+                {
+                    ModelState.AddModelError("Cpf", "Este CPF já está cadastrado.");
+                }
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return View(usuarios);
+            }
+
+            // 4. Formatação do Nome (Title Case)
+            if (!string.IsNullOrWhiteSpace(usuarios.Nome))
+            {
+                string nomeFormatado = System.Globalization.CultureInfo.CurrentCulture.TextInfo
+                    .ToTitleCase(usuarios.Nome.ToUpper()); 
+                usuarios.Nome = nomeFormatado;
+            }
+
+            // 5. Criptografia da Senha
+            usuarios.Senha = BCrypt.Net.BCrypt.HashPassword(usuarios.Senha);
+
+            // 6. Salvar no Banco
+            _context.Add(usuarios);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Login));
         }
-        // GET: Usuarios/Sair
-        [HttpPost]
-        [ValidateAntiForgeryToken]
+
+
+        //  Usuarios/Sair
         public IActionResult Sair()
         {
             return RedirectToAction(nameof(Login));

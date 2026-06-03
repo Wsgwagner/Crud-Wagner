@@ -1,4 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿#nullable disable
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using WebCRUDMVCSQL.Models;
@@ -17,9 +22,9 @@ namespace WebCRUDMVCSQL.Controllers
         // GET: Pedidos
         public async Task<IActionResult> Index()
         {
-            // Busca os pedidos incluindo os dados do cliente para mostrar na tabela
             var pedidos = await _context.Pedidos
                 .Include(p => p.Cliente)
+                .OrderByDescending(p => p.DataPedido)
                 .ToListAsync();
 
             return View(pedidos);
@@ -30,7 +35,6 @@ namespace WebCRUDMVCSQL.Controllers
         {
             if (id == null) return NotFound();
 
-            // Buscamos o pedido com o Cliente e também a lista completa de Itens com seus respectivos Produtos
             var pedido = await _context.Pedidos
                 .Include(p => p.Cliente)
                 .Include(p => p.Itens)
@@ -45,8 +49,14 @@ namespace WebCRUDMVCSQL.Controllers
         // GET: Pedidos/Create
         public IActionResult Create()
         {
-            ViewBag.ClienteId = new SelectList(_context.Clientes, "Id", "Nome");
-            ViewBag.ProdutoId = new SelectList(_context.Produto, "Id", "Nome");
+            ViewBag.ClienteId = new SelectList(
+                _context.Clientes.Where(c => c.Ativo).OrderBy(c => c.Nome),
+                "Id", "Nome"
+            );
+            ViewBag.ProdutoId = new SelectList(
+                _context.Produto.OrderBy(p => p.Nome),
+                "Id", "Nome"
+            );
             return View();
         }
 
@@ -57,13 +67,11 @@ namespace WebCRUDMVCSQL.Controllers
         {
             if (itens == null || !itens.Any())
             {
-                ModelState.AddModelError("", "É necessário adicionar pelo menos um produto ao pedido.");
-                ViewBag.ClienteId = new SelectList(_context.Clientes, "Id", "Nome", clienteId);
-                ViewBag.ProdutoId = new SelectList(_context.Produto, "Id", "Nome");
+                ModelState.AddModelError("", "Adicione pelo menos um produto ao pedido.");
+                RecarregarViewBags(clienteId);
                 return View();
             }
 
-            double valorTotalPedido = 0;
             var novoPedido = new Pedidos
             {
                 ClienteId = clienteId,
@@ -71,28 +79,29 @@ namespace WebCRUDMVCSQL.Controllers
                 Total = 0
             };
 
+            double total = 0;
             foreach (var itemInput in itens)
             {
                 var produto = await _context.Produto.FindAsync(itemInput.ProdutoId);
                 if (produto != null)
                 {
-                    double subtotalItem = produto.Preco * itemInput.Quantidade;
-                    valorTotalPedido += subtotalItem;
-
-                    var itemPedido = new ItemPedido
+                    total += produto.Preco * itemInput.Quantidade;
+                    novoPedido.Itens.Add(new ItemPedido
                     {
                         ProdutoId = itemInput.ProdutoId,
                         Quantidade = itemInput.Quantidade,
                         PrecoUnitario = produto.Preco
-                    };
-                    novoPedido.Itens.Add(itemPedido);
+                    });
                 }
             }
 
-            novoPedido.Total = valorTotalPedido;
+            novoPedido.Total = total;
 
             _context.Add(novoPedido);
             await _context.SaveChangesAsync();
+
+            var cliente = await _context.Clientes.FindAsync(clienteId);
+            TempData["Sucesso"] = $"Pedido #{novoPedido.Id} criado com sucesso para {cliente?.Nome}!";
 
             return RedirectToAction(nameof(Index));
         }
@@ -102,7 +111,6 @@ namespace WebCRUDMVCSQL.Controllers
         {
             if (id == null) return NotFound();
 
-            // AJUSTADO: Carrega o pedido trazendo a lista de itens e produtos completa para o carrinho da View
             var pedido = await _context.Pedidos
                 .Include(p => p.Cliente)
                 .Include(p => p.Itens)
@@ -111,8 +119,14 @@ namespace WebCRUDMVCSQL.Controllers
 
             if (pedido == null) return NotFound();
 
-            ViewBag.ClienteId = new SelectList(_context.Clientes, "Id", "Nome", pedido.ClienteId);
-            ViewBag.ProdutoId = new SelectList(_context.Produto, "Id", "Nome");
+            ViewBag.ClienteId = new SelectList(
+                _context.Clientes.Where(c => c.Ativo).OrderBy(c => c.Nome),
+                "Id", "Nome", pedido.ClienteId
+            );
+            ViewBag.ProdutoId = new SelectList(
+                _context.Produto.OrderBy(p => p.Nome),
+                "Id", "Nome"
+            );
 
             return View(pedido);
         }
@@ -120,7 +134,6 @@ namespace WebCRUDMVCSQL.Controllers
         // POST: Pedidos/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        // AJUSTADO: Agora aceita a lista modificada de itens vinda da tela
         public async Task<IActionResult> Edit(int id, int clienteId, List<ItemPedidoInput> itens)
         {
             if (id == 0) return NotFound();
@@ -134,21 +147,17 @@ namespace WebCRUDMVCSQL.Controllers
             if (itens == null || !itens.Any())
             {
                 ModelState.AddModelError("", "O pedido deve conter pelo menos um produto.");
-                ViewBag.ClienteId = new SelectList(_context.Clientes, "Id", "Nome", clienteId);
-                ViewBag.ProdutoId = new SelectList(_context.Produto, "Id", "Nome");
+                RecarregarViewBags(clienteId);
                 return View(pedidoBanco);
             }
 
             try
             {
-                // 1. Atualiza o vínculo do cliente
                 pedidoBanco.ClienteId = clienteId;
 
-                // 2. Limpa os itens antigos associados para evitar duplicidade ou registros órfãos
                 _context.Set<ItemPedido>().RemoveRange(pedidoBanco.Itens);
                 pedidoBanco.Itens.Clear();
 
-                // 3. Recalcula o total baseado no preço atual do banco e adiciona o novo carrinho
                 double novoTotal = 0;
                 foreach (var itemInput in itens)
                 {
@@ -156,7 +165,6 @@ namespace WebCRUDMVCSQL.Controllers
                     if (produto != null)
                     {
                         novoTotal += produto.Preco * itemInput.Quantidade;
-
                         pedidoBanco.Itens.Add(new ItemPedido
                         {
                             ProdutoId = itemInput.ProdutoId,
@@ -170,6 +178,8 @@ namespace WebCRUDMVCSQL.Controllers
 
                 _context.Update(pedidoBanco);
                 await _context.SaveChangesAsync();
+
+                TempData["Sucesso"] = $"Pedido #{id} atualizado com sucesso!";
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -178,22 +188,6 @@ namespace WebCRUDMVCSQL.Controllers
             }
 
             return RedirectToAction(nameof(Index));
-        }
-
-        // GET: Pedidos/Delete/5
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null) return NotFound();
-
-            var pedido = await _context.Pedidos
-                .Include(p => p.Cliente)
-                .Include(p => p.Itens)
-                    .ThenInclude(i => i.Produto)
-                .FirstOrDefaultAsync(m => m.Id == id);
-
-            if (pedido == null) return NotFound();
-
-            return View(pedido);
         }
 
         // POST: Pedidos/Delete/5
@@ -207,21 +201,32 @@ namespace WebCRUDMVCSQL.Controllers
 
             if (pedido != null)
             {
-                // Remove os itens vinculados primeiro por causa da integridade da chave estrangeira
-                foreach (var item in pedido.Itens.ToList())
-                {
-                    _context.Set<ItemPedido>().Remove(item);
-                }
-
+                _context.Set<ItemPedido>().RemoveRange(pedido.Itens);
                 _context.Pedidos.Remove(pedido);
                 await _context.SaveChangesAsync();
+
+                TempData["Aviso"] = $"Pedido #{id} removido com sucesso.";
             }
 
             return RedirectToAction(nameof(Index));
         }
+
+        // ── Métodos privados ────────────────────────────────────────────
+
+        private void RecarregarViewBags(int clienteIdSelecionado = 0)
+        {
+            ViewBag.ClienteId = new SelectList(
+                _context.Clientes.Where(c => c.Ativo).OrderBy(c => c.Nome),
+                "Id", "Nome", clienteIdSelecionado
+            );
+            ViewBag.ProdutoId = new SelectList(
+                _context.Produto.OrderBy(p => p.Nome),
+                "Id", "Nome"
+            );
+        }
     }
 
-    // DTO auxiliar posicionado corretamente no escopo do namespace
+    // DTO auxiliar
     public class ItemPedidoInput
     {
         public int ProdutoId { get; set; }

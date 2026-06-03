@@ -4,77 +4,87 @@
     ViewData["Title"] = "Clientes";
 }
 
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+@if (TempData["Sucesso"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        ✅ @TempData["Sucesso"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
 
-<div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-3 mb-4 mt-4">
-    <div>
-        <h2 class="fw-bold text-dark m-0 tracking-tight">Cadastro de Clientes</h2>
-        <p class="text-muted m-0 small">Gerencie a listagem, informações fiscais e contatos da sua empresa</p>
+@if (TempData["Aviso"] != null)
+{
+    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+        ⚠️ @TempData["Aviso"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
     </div>
-    <div>
-        <a asp-action="Create" class="btn btn-primary px-4 py-2 fw-semibold shadow-sm d-inline-flex align-items-center gap-2">
-            <i class="bi bi-person-plus-fill"></i> Novo Cliente
-        </a>
-    </div>
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h3 class="fw-bold m-0">Clientes</h3>
+    <a asp-action="Create" class="btn btn-primary fw-semibold shadow-sm">
+        + Novo Cliente
+    </a>
 </div>
 
-<div class="card border-0 shadow-sm rounded-3 overflow-hidden">
-    <div class="table-responsive">
+<div class="card border-0 shadow-sm rounded-3">
+    <div class="card-body p-0">
         <table class="table table-hover align-middle mb-0">
-            <thead>
+            <thead class="table-light">
                 <tr>
-                    <th class="ps-4 py-3">@Html.DisplayNameFor(model => model.Nome)</th>
-                    <th class="py-3">@Html.DisplayNameFor(model => model.Cpf)</th>
-                    <th class="py-3">@Html.DisplayNameFor(model => model.Telefone)</th>
-                    <th class="py-3">@Html.DisplayNameFor(model => model.Email)</th>
-                    <th class="py-3">@Html.DisplayNameFor(model => model.Endereco)</th>
-                    <th class="py-3 text-end pe-4">Ações</th>
+                    <th class="ps-4">Nome</th>
+                    <th>CPF</th>
+                    <th>E-mail</th>
+                    <th>Telefone</th>
+                    <th class="text-center">Status</th>
+                    <th class="text-center pe-4">Ações</th>
                 </tr>
             </thead>
             <tbody>
-                @foreach (var item in Model)
+                @foreach (var cliente in Model)
+                {
+                    <tr class="@(!cliente.Ativo ? "table-secondary text-muted" : "")">
+                        <td class="ps-4 fw-medium">@cliente.Nome</td>
+                        <td>@cliente.Cpf</td>
+                        <td>@cliente.Email</td>
+                        <td>@cliente.Telefone</td>
+
+                        <td class="text-center">
+                            <form asp-action="AlterarStatus" asp-route-id="@cliente.Id" method="post">
+                                @Html.AntiForgeryToken()
+                                <button type="submit"
+                                        class="btn btn-sm fw-semibold px-3 @(cliente.Ativo ? "btn-success" : "btn-outline-secondary")"
+                                        title="@(cliente.Ativo ? "Clique para desativar" : "Clique para reativar")">
+                                    @if (cliente.Ativo)
+                                    {
+                                        <span>● Ativo</span>
+                                    }
+                                    else
+                                    {
+                                        <span>○ Inativo</span>
+                                    }
+                                </button>
+                            </form>
+                        </td>
+
+                        <td class="text-center pe-4">
+                            <a asp-action="Details" asp-route-id="@cliente.Id"
+                               class="btn btn-sm btn-outline-info me-1" title="Detalhes">
+                                🔍
+                            </a>
+                            <a asp-action="Edit" asp-route-id="@cliente.Id"
+                               class="btn btn-sm btn-outline-primary" title="Editar">
+                                ✏️
+                            </a>
+                        </td>
+                    </tr>
+                }
+
+                @if (!Model.Any())
                 {
                     <tr>
-                        <td class="ps-4 py-3">
-                            <div class="d-flex align-items-center gap-3">
-                                <div class="avatar-circle d-flex align-items-center justify-content-center bg-primary-subtle text-primary fw-bold rounded-circle" style="width: 38px; height: 38px; font-size: 0.9rem;">
-                                    @(string.IsNullOrEmpty(item.Nome) ? "?" : item.Nome.Substring(0, 1).ToUpper())
-                                </div>
-                                <div>
-                                    <span class="fw-semibold text-dark d-block">@Html.DisplayFor(modelItem => item.Nome)</span>
-                                </div>
-                            </div>
-                        </td>
-                        
-                        <td class="py-3 text-secondary text-nowrap">
-                            <i class="bi bi-card-text text-muted me-1"></i> @Html.DisplayFor(modelItem => item.Cpf)
-                        </td>
-                        <td class="py-3 text-secondary text-nowrap">
-                            <i class="bi bi-telephone text-muted me-1"></i> @Html.DisplayFor(modelItem => item.Telefone)
-                        </td>
-                        <td class="py-3 text-secondary">
-                            <span class="text-truncate d-inline-block" style="max-width: 180px;">
-                                @Html.DisplayFor(modelItem => item.Email)
-                            </span>
-                        </td>
-                        <td class="py-3 text-secondary">
-                            <span class="text-truncate d-inline-block text-muted small" style="max-width: 200px;" title="@item.Endereco">
-                                @Html.DisplayFor(modelItem => item.Endereco)
-                            </span>
-                        </td>
-                        
-                        <td class="py-3 text-end pe-4">
-                            <div class="d-inline-flex gap-1" role="group">
-                                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-light text-primary border shadow-sm px-2" title="Editar">
-                                    <i class="bi bi-pencil-square"></i>
-                                </a>
-                                <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-light text-info border shadow-sm px-2" title="Detalhes">
-                                    <i class="bi bi-eye"></i>
-                                </a>
-                                <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-light text-danger border shadow-sm px-2" title="Deletar">
-                                    <i class="bi bi-trash"></i>
-                                </a>
-                            </div>
+                        <td colspan="6" class="text-center text-muted py-4">
+                            Nenhum cliente cadastrado.
                         </td>
                     </tr>
                 }

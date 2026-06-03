@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WebCRUDMVCSQL.Models;
 
@@ -11,9 +12,10 @@ using WebCRUDMVCSQL.Models;
 namespace WebCRUDMVCSQL.Migrations
 {
     [DbContext(typeof(Contexto))]
-    partial class ContextoModelSnapshot : ModelSnapshot
+    [Migration("20260602235130_Inicial-validaçãocliente")]
+    partial class Inicialvalidaçãocliente
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -36,17 +38,8 @@ namespace WebCRUDMVCSQL.Migrations
                         .HasColumnName("Ativo");
 
                     b.Property<string>("Cpf")
-                        .HasMaxLength(14)
-                        .HasColumnType("nvarchar(14)")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnName("CPF");
-
-                    b.Property<DateTime>("DataCadastro")
-                        .HasColumnType("datetime2")
-                        .HasColumnName("DataCadastro");
-
-                    b.Property<DateTime?>("DataDesativacao")
-                        .HasColumnType("datetime2")
-                        .HasColumnName("DataDesativacao");
 
                     b.Property<DateTime>("DataNascimento")
                         .HasColumnType("datetime2")
@@ -62,7 +55,6 @@ namespace WebCRUDMVCSQL.Migrations
                         .HasColumnName("Endereço");
 
                     b.Property<string>("Nome")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("Nome");
 
@@ -176,11 +168,11 @@ namespace WebCRUDMVCSQL.Migrations
                         .HasColumnName("DataNascimento");
 
                     b.Property<string>("Email")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("Email");
 
                     b.Property<string>("Endereco")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)")
                         .HasColumnName("Endereço");
 

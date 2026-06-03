@@ -15,8 +15,8 @@ namespace WebCRUDMVCSQL.Models
         [Column("Nome")]
         [Display(Name = "Nome")]
 
-        public string? Nome { get ; set; }
-                      
+        public string? Nome { get; set; }
+
 
         [Column("CPF")]
         [Display(Name = "CPF")]
@@ -29,9 +29,17 @@ namespace WebCRUDMVCSQL.Models
         [Display(Name = "Data de Nascimento")]
         public DateTime DataNascimento { get; set; }
 
+
+
         [Column("Email")]
         [Display(Name = "Email")]
+
+        [Required(ErrorMessage = "O e-mail é obrigatório.")]
+        [RegularExpression(@"^[^@\s]+@[^@\s]+\.[^@\s]+$",
+       ErrorMessage = "E-mail inválido. Deve conter caracteres antes do @, o símbolo @ e um domínio válido.")]
+
         public string? Email { get; set; }
+       
 
         [Column("Endereço")]
         [Display(Name = "Endereço")]
@@ -39,7 +47,7 @@ namespace WebCRUDMVCSQL.Models
 
         [Column("Senha")]
         [Display(Name = "Senha")]
-        [Required(ErrorMessage = "A senha é obrigatória.")] 
+        [Required(ErrorMessage = "A senha é obrigatória.")]
         public string? Senha { get; set; }
 
 
